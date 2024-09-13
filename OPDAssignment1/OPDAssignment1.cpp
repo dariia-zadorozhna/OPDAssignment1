@@ -1,20 +1,66 @@
-﻿// OPDAssignment1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+﻿#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
+#include <map>
+using namespace std;
 
-#include <iostream>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+class Seat {
+public:
+	string name;
+	string price;
+	string passenger;
+	bool isBooked;
+	int ID;
+
+	Seat() : name(""), price(""), passenger(""), isBooked(false), ID(0) {}
+	Seat(string n, string p) : name(n), price(p), passenger(""), isBooked(false), ID(0) {} // by default it creates a seat, which is not booked
+
+	void bookSeat(string& passengerName, int seatID) {
+		passenger = passengerName;
+		isBooked = true;
+		ID = seatID;
+	}
+};
+
+class Flight {
+public:
+	string flightDate;
+	string flightNumber;
+	vector<Seat> seats;
+
+	Flight(string d, string fN, vector<Seat> s) : flightDate(d), flightNumber(fN), seats(s) {}
+};
+
+class System {
+public:
+	vector<Flight> flights;
+	void run();
+private:
+	string input;
+	string command;
+	string forView;
+	string systemFlightNumber;
+	string systemFlightDate;
+	string ID;
+	string seat;
+	string username;
+	int currentTicketID = 1;
+	int numbOfOutputs;
+	void readFile();
+	void printCommands();
+	void clearData();
+	void check();
+	void book();
+	void returnTicket();
+	void viewUsername();
+	void viewFlight();
+	void viewID();
+};
+
+int main() {
+	System system;
+	system.run();
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

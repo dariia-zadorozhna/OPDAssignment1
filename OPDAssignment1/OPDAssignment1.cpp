@@ -6,6 +6,16 @@
 #include <map>
 using namespace std;
 
+bool isNumeric(const std::string& str) {
+	if (str.empty()) return false;
+
+	for (char c : str) {
+		if (!isdigit(c)) {
+			return false;
+		}
+	}
+	return true;
+}
 
 class Seat {
 public:
@@ -176,6 +186,139 @@ void System::run() {
 		}
 		else {
 			cout << "\nThe input is incorrect!\n\n";
+		}
+	}
+}
+
+void System::check() {
+	numbOfOutputs = 0;
+	cout << endl;
+	for (int i = 0; i < flights.size(); i++) {
+		if (flights[i].flightDate == systemFlightDate && flights[i].flightNumber == systemFlightNumber) {
+			for (int j = 0; j < flights[i].seats.size(); j++) {
+				if (!flights[i].seats[j].isBooked) {
+					cout << flights[i].seats[j].name << " " << flights[i].seats[j].price << ", ";
+					numbOfOutputs++;
+				}
+			}
+			if (numbOfOutputs == 0) {
+				cout << "All the seats are booked\n\n";
+			}
+			cout << "\n\n";
+			break;
+		}
+		else {
+			cout << "There is no such flight or the input is incorrect!\n\n";
+			break;
+		}
+		systemFlightDate.clear(); // do I need this?
+		systemFlightNumber.clear();
+	}
+}
+
+void System::book() {
+	for (int i = 0; i < flights.size(); i++) {
+		if (flights[i].flightDate == systemFlightDate && flights[i].flightNumber == systemFlightNumber) {
+			for (int j = 0; j < flights[i].seats.size(); j++) {
+				if (flights[i].seats[j].name == seat && !flights[i].seats[j].isBooked) {
+					flights[i].seats[j].bookSeat(username, currentTicketID);
+					cout << "\nConfirmed with ID " << currentTicketID << "\n\n";
+					currentTicketID++;
+					systemFlightDate.clear(); // do I need this?
+					systemFlightNumber.clear();
+					i = flights.size();
+					break;
+				}
+			}
+		}
+		else {
+			cout << "\nThere is no such flight or the input is incorrect!\n\n";
+			break;
+		}
+	}
+}
+
+void System::returnTicket() {
+	int intID = -1;
+
+	if (isNumeric(ID)) {
+		intID = stoi(ID);
+	}
+
+	for (int i = 0; i < flights.size(); i++) {
+		for (int j = 0; j < flights[i].seats.size(); j++) {
+			if (flights[i].seats[j].ID == intID) {
+				cout << "\nConfirmed " << flights[i].seats[j].price << " refund for " << flights[i].seats[j].passenger << "\n\n";
+				flights[i].seats[j].ID = 0;
+				flights[i].seats[j].passenger = "";
+				flights[i].seats[j].isBooked = false;
+				numbOfOutputs++;
+				break;
+			}
+		}
+	}
+	if (numbOfOutputs == 0) {
+		cout << "\nThere is no such ID!\n\n";
+	}
+}
+
+void System::viewUsername() {
+	int rowNumb = 1;
+
+	for (int i = 0; i < flights.size(); i++) {
+		for (int j = 0; j < flights[i].seats.size(); j++) {
+			if (flights[i].seats[j].passenger == username && !username.empty()) {
+				cout << "\n" << rowNumb << ". Flight " << flights[i].flightNumber << ", " << flights[i].flightDate << ", seat " << flights[i].seats[j].name <<
+					", price " << flights[i].seats[j].price << "\n\n";
+				rowNumb++;
+			}
+		}
+	}
+	if (rowNumb == 1) {
+		cout << "\nThere is no such passenger or the passenger name is incorrect!\n\n";
+	}
+}
+
+void System::viewFlight() {
+	for (int i = 0; i < flights.size(); i++) {
+		if (flights[i].flightDate == systemFlightDate && flights[i].flightNumber == systemFlightNumber) {
+			for (int j = 0; j < flights[i].seats.size(); j++) {
+				if (flights[i].seats[j].isBooked) {
+					cout << "\n" << flights[i].seats[j].name << " " << flights[i].seats[j].passenger << " " << flights[i].seats[j].price << "\n\n";
+					numbOfOutputs++;
+				}
+			}
+			if (numbOfOutputs == 0) {
+				cout << "\nThere are no booked seats on this flight!\n\n";
+			}
+			break;
+		}
+		else { if (i == flights.size() - 1) { cout << "\nThere is no such flight or the input is incorrect!\n\n"; } }
+	}
+}
+
+void System::viewID() {
+	numbOfOutputs = 0;
+	ID = forView;
+
+	if (!isNumeric(ID)) {
+		cout << "\nThe input is incorrect!\n\n";
+	}
+	else {
+		int intID = stoi(ID);
+
+		for (int i = 0; i < flights.size(); i++) {
+			for (int j = 0; j < flights[i].seats.size(); j++) {
+				if (flights[i].seats[j].ID == intID) {
+					cout << "\nFlight " << flights[i].flightNumber << ", " << flights[i].flightDate << ", seat " << flights[i].seats[j].name <<
+						", price " << flights[i].seats[j].price << ", " << flights[i].seats[j].passenger << "\n\n";
+					numbOfOutputs++;
+					break;
+				}
+			}
+		}
+		if (numbOfOutputs == 0) {
+			cout << "\nThere is no such ticket ID or the input is incorrect!\n\n";
 		}
 	}
 }
